@@ -4,7 +4,7 @@ first_num = int(sys.stdin.readline())    # 첫 번째 수
 max_cnt = 0
 max_list = []
 
-for i in range(first_num-1, 0, -1):
+for i in range(first_num, 0, -1):
     num_list = [first_num, i]
     idx = 0
     while True:
@@ -21,7 +21,7 @@ for i in range(first_num-1, 0, -1):
         max_list.clear()
         for j in num_list:
             max_list.append(j)
-        num_list.clear()
+        # num_list.clear()
 
 print(max_cnt)
 print(*max_list)
