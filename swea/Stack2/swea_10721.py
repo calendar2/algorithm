@@ -1,4 +1,4 @@
-def f(i, N):
+def f(i, N):    # 순열 구하는 함수, i는 0부터 n개까지 올라가는 변수
     global min_v
     if i == N:
         # print(p)
