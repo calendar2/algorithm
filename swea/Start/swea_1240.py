@@ -44,6 +44,23 @@ for tc in range(1, T+1):
                 code_sol += str(cnt)
                 cnt = 1
 
-        code_trans_num[i]
+        code_trans_num[i] = code_dict[code_sol]
 
-    # print(code)
+    # 올바른 코드인지 확인
+    code_chk = 0
+    for i in range(8):
+        if i % 2:
+            code_chk += code_trans_num[i]
+        else:
+            code_chk += code_trans_num[i] * 3
+    
+    right_code = False
+    if code_chk % 10 == 0:
+        right_code = True
+
+    ans = 0
+    if right_code:
+        for i in range(8):
+            ans += code_trans_num[i]
+
+    print(f'#{tc} {ans}')
