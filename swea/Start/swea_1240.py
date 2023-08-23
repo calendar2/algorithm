@@ -37,13 +37,13 @@ for tc in range(1, T+1):
         code_sol = ''
         for j in range(7):
             if j == 0:
-                cnt += 1
+                cnt = 1
             elif code[i][j] == code[i][j-1]:
                 cnt += 1
             else:
                 code_sol += str(cnt)
                 cnt = 1
-
+        code_sol += str(cnt)
         code_trans_num[i] = code_dict[code_sol]
 
     # 올바른 코드인지 확인
