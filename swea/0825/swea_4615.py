@@ -27,17 +27,35 @@ for tc in range(1, T+1):
         # 8방향으로 같은 돌이 있는지 탐색
         for j in range(8):
             # 착수점 바로 인접하게 돌이 있을 경우부터 탐색
-            nr = (play[i][1]-1) + dr[j]
-            nc = (play[i][0]-1) + dc[j]
-            while 0 <= nr < N and 0 <= nc < N and arr[nr][nc] != 0 and arr[nr][nc] != play[i][2]:
-                temp.append((nr, nc))
-                nr = nr + dr[j]
-                nc = nc + dc[j]
+            nr = (play[i][1] - 1) + dr[j]
+            nc = (play[i][0] - 1) + dc[j]
+            if 0 <= nr < N and 0 <= nc < N:
+                if arr[nr][nc] != 0 and arr[nr][nc] != play[i][2]:
+                    for k in range(2, N):
+                        nr = (play[i][1] - 1) + dr[j] * k
+                        nc = (play[i][0] - 1) + dc[j] * k
 
-            # while 끝나면 같은 색 돌이라는 뜻이니까
-            while temp:
-                row, col = temp.pop(0)
-                arr[row][col] = play[i][2]
+                        if 0 <= nr < N and 0 <= nc < N:
+                            if arr[nr][nc] == 0:
+                                break
+                            # 같은 색 돌이 놓여있으면 탐색 종료
+                            elif arr[nr][nc] == play[i][2]:
+                                switch = True
+                                cnt = k
+                                break
+
+                    # 탐색 후 뒤집기 가능한 곳을 배열에 담기
+                    if switch:
+                        for l in range(1, cnt):
+                            nr = (play[i][1] - 1) + dr[j] * l
+                            nc = (play[i][0] - 1) + dc[j] * l
+                            temp.append((nr, nc))
+                        switch = False
+
+        # 8방향 전부 탐색이 되어 뒤집기 가능한 점을 찾아내면
+        while temp:
+            row, col = temp.pop(0)
+            arr[row][col] = play[i][2]
 
     # 흑돌, 백돌 갯수 탐색
     black = 0
