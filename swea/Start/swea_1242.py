@@ -61,55 +61,71 @@ for tc in range(1, T+1):
     code_trans_int = 0
     check = True
     code_num = ''
+    solution = [0, 0, 0, 0]
+    idx = 0
     for i in code_2:
         for j in range(len(i)-1, -1, -1):
             if j == len(i)-1:
                 if i[j] == '1':
                     cnt += 1
             else:
-                if code_trans == '':
+                if idx == 0:
                     if i[j] == '1':
                         cnt += 1
                     else:
                         if cnt > 0:
-                            code_trans += str(cnt)
+                            # code_trans += str(cnt)
+                            solution[idx] = cnt
                             cnt = 1
+                            idx += 1
                 else:
                     if i[j] == i[j+1]:
                         cnt += 1
                     else:
-                        code_trans += str(cnt)
+                        # code_trans += str(cnt)
+                        solution[idx] = cnt
                         cnt = 1
+                        idx += 1
 
-            if len(code_trans) == 4:
-                code_trans_int = int(code_trans)
-                print(code_trans_int)
+            if idx == 4:
+                # code_trans_int = int(code_trans)
+                # print(code_trans_int)
                 while check:
                     for k in range(4):
-                        if code_trans[k] == '1':
+                        if solution[k] == 1:
                             check = False
                             break
                     if check:
-                        code_trans_int = code_trans_int // 2
-                        code_trans = str(code_trans_int)
+                        # code_trans_int = code_trans_int // 2
+                        # code_trans = str(code_trans_int)
+                        for k in range(4):
+                            solution[k] = solution[k] // 2
                     else:
+                        for k in range(4):
+                            code_trans += str(solution[k])
                         code_num = trans_dict2[code_trans] + code_num
                         code_trans = ''
+                        idx = 0
             else:
                 # j = 0(순회의 마지막 부분인데)인데 길이가 4가 아닌 경우
                 if j == 0:
-                    code_trans_int = int(code_trans)
+                    # code_trans_int = int(code_trans)
                     while check:
                         for k in range(3):
-                            if code_trans[k] == '1':
+                            if solution[k] == 1:
                                 check = False
                                 break
                         if check:
-                            code_trans_int = code_trans_int // 2
-                            code_trans = str(code_trans_int)
+                            # code_trans_int = code_trans_int // 2
+                            # code_trans = str(code_trans_int)
+                            for k in range(3):
+                                solution[k] = solution[k] // 2
                         else:
+                            for k in range(3):
+                                code_trans += str(solution[k])
                             code_num = trans_dict3[code_trans] + code_num
                             code_trans = ''
+                            idx = 0
 
             # while문을 빠져나오면
             check = True
@@ -117,7 +133,7 @@ for tc in range(1, T+1):
             # code_num이 8자리인지
             if len(code_num) == 8:
                 code.append(code_num)
-                print(code)
+                # print(code)
                 code_num = ''
                 cnt = 0
 
