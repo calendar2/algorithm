@@ -1,157 +1,82 @@
+def erase(i, j, ratio, N):
+    end = i
+    while end < N and bcode[i][j-1] == 1:
+        end += 1
+    for r in range(i, end):
+        for c in range(j-56*ratio, j):
+            bcode[r][c] = 0
+
+# 16진수 -> 2진수 변환
+h2b = {'0': '0000', '1': '0001', '2': '0010', '3': '0011',
+       '4': '0100', '5': '0101', '6': '0110', '7': '0111',
+       '8': '1000', '9': '1001', 'A': '1010', 'B': '1011',
+       'C': '1100', 'D': '1101', 'E': '1110', 'F': '1111'}
+
+# 3자리까지만 알아도 코드 변환이 가능하다.
+pat = {211: 0, 221: 1, 122: 2,
+       411: 3, 132: 4, 231: 5,
+       114: 6, 312: 7, 213: 8, 112: 9}
+
 T = int(input())
 for tc in range(1, T+1):
     N, M = map(int, input().split())    # 배열의 세로, 가로 크기
-    arr = []     # 주어진 배열
+    hcode = [input() for _ in range(N)]     # 주어진 배열
+    bcode = [[0]*M*4 for _ in range(N)]     # 16진수 코드를 2진수로 저장할 배열
+
+    # 16진수 코드를 2진수로 변환해서 담는 과정
     for i in range(N):
-        msg = input()
-        if msg != '0'*M:
-            if len(arr) != 0:
-                for j in range(len(arr)):
-                    if arr[j] == msg:
-                        break
-                    if j == len(arr)-1:
-                        arr.append(msg)
-            else:
-                arr.append(msg)
+        for j in range(M):
+            for k in range(4):
+                bcode[i][j*4+k] = int(h2b[hcode[i][j]][k])
 
-    # 암호 담을 배열들
-    code_16_0 = []      # 16진수, 앞에 0이 남아있는 암호
-    temp = []           # arr 요소를 리스트로 만들어서 담아줄 배열
-    col = 0
+    M *= 4      # M을 4배로 늘리고
+    ans = 0     # 나중에 정답으로 쓸 변수
 
-    for i in arr:
-        temp.append(list(i))
+    # 각 열을 돌면서 코드가 나타나면 암호코드 찾기
+    for i in range(N):
+        j = 0
+        pwd = [0] * 8   # 암호코드 저장할 배열
+        k = 0
 
-    # 우측에 있는 0을 제거한다.
-    for i in temp:
-        for j in range(len(i)-1, -1, -1):
-            if i[j] != '0':
-                col = j
+        while j < M:
+            # 앞에서부터 순회하며 0이 나올 땐 일단 건너뛰기
+            while j < M and bcode[i][j] == 0:
+                j += 1
+
+            # 0을 건너뛰었는데 암호코드가 없으면 다음줄로 이동
+            if j == M:
                 break
-        code_16_0.append(i[0:j+1])
 
-    # 16진수 -> 2진수 변환
-    trans_dict1 = {'0': '0000', '1': '0001', '2': '0010', '3': '0011',
-                   '4': '0100', '5': '0101', '6': '0110', '7': '0111',
-                   '8': '1000', '9': '1001', 'A': '1010', 'B': '1011',
-                   'C': '1100', 'D': '1101', 'E': '1110', 'F': '1111'}
+            # if문을 넘어왔으면 1의 갯수 세기
+            cnt100 = 0
+            while j < M and bcode[i][j] == 1:
+                cnt100 += 1
+                j += 1
 
-    # 2진수 코드 -> 숫자 코드로 변환(역순으로 배치)
-    trans_dict2 = {'1123': '0', '1222': '1', '2212': '2',
-                   '1141': '3', '2311': '4', '1321': '5',
-                   '4111': '6', '2131': '7', '3121': '8', '2113': '9'}
+            # 그다음 0과 1의 갯수도 차례로 세기
+            cnt10 = 0
+            while j < M and bcode[i][j] == 0:
+                cnt10 += 1
+                j += 1
+            cnt1 = 0
+            while j < M and bcode[i][j] == 1:
+                cnt1 += 1
+                j += 1
 
-    # 3자리까지만 검색되고 앞이 전부 0일 경우 아래 딕셔너리를 참조
-    trans_dict3 = {'112': '0', '122': '1', '221': '2',
-                   '114': '3', '231': '4', '132': '5',
-                   '411': '6', '213': '7', '312': '8', '211': '9'}
+            ratio = min(cnt1, cnt10, cnt100)    # 암호의 배율 찾기
+            cnt1 //= ratio
+            cnt10 //= ratio
+            cnt100 //= ratio
 
-    code_2 = []     # 2진수로 변환한 암호
-    temp_str = ''
-    # 2진수로 암호를 변환하자!
-    for i in code_16_0:
-        for j in i:
-            temp_str += trans_dict1[j]
-        code_2.append(temp_str)
-        temp_str = ''
+            # 암호코드 찾아서 배열에 삽입
+            pwd[k] = pat[cnt100*100 + cnt10*10 + cnt1]
+            k += 1
 
-    code = []
-    cnt = 0
-    code_trans = ''
-    code_trans_int = 0
-    check = True
-    code_num = ''
-    solution = [0, 0, 0, 0]
-    idx = 0
-    for i in code_2:
-        for j in range(len(i)-1, -1, -1):
-            if j == len(i)-1:
-                if i[j] == '1':
-                    cnt += 1
-            else:
-                if idx == 0:
-                    if i[j] == '1':
-                        cnt += 1
-                    else:
-                        if cnt > 0:
-                            # code_trans += str(cnt)
-                            solution[idx] = cnt
-                            cnt = 1
-                            idx += 1
-                else:
-                    if i[j] == i[j+1]:
-                        cnt += 1
-                    else:
-                        # code_trans += str(cnt)
-                        solution[idx] = cnt
-                        cnt = 1
-                        idx += 1
-
-            if idx == 4:
-                # code_trans_int = int(code_trans)
-                # print(code_trans_int)
-                while check:
-                    for k in range(4):
-                        if solution[k] == 1:
-                            check = False
-                            break
-                    if check:
-                        # code_trans_int = code_trans_int // 2
-                        # code_trans = str(code_trans_int)
-                        for k in range(4):
-                            solution[k] = solution[k] // 2
-                    else:
-                        for k in range(4):
-                            code_trans += str(solution[k])
-                        code_num = trans_dict2[code_trans] + code_num
-                        code_trans = ''
-                        idx = 0
-            else:
-                # j = 0(순회의 마지막 부분인데)인데 길이가 4가 아닌 경우
-                if j == 0:
-                    # code_trans_int = int(code_trans)
-                    while check:
-                        for k in range(3):
-                            if solution[k] == 1:
-                                check = False
-                                break
-                        if check:
-                            # code_trans_int = code_trans_int // 2
-                            # code_trans = str(code_trans_int)
-                            for k in range(3):
-                                solution[k] = solution[k] // 2
-                        else:
-                            for k in range(3):
-                                code_trans += str(solution[k])
-                            code_num = trans_dict3[code_trans] + code_num
-                            code_trans = ''
-                            idx = 0
-
-            # while문을 빠져나오면
-            check = True
-
-            # code_num이 8자리인지
-            if len(code_num) == 8:
-                code.append(code_num)
-                # print(code)
-                code_num = ''
-                cnt = 0
-
-    # 이제 올바른 암호코드인지 확인
-    result = 0
-    c_code = ''
-    ans = 0
-    for i in code:
-        for j in range(8):
-            if j % 2:
-                result += int(i[j])
-            else:
-                result += int(i[j])*3
-
-        # 결과가 10의 배수이면 올바른 코드
-        if result % 10 == 0:
-            c_code = i
-            for c in c_code:
-                ans += int(c)
-
+            # 8자리가 되면 올바른 암호코드 판별
+            if k == 8:
+                cs = ((pwd[0]+pwd[2]+pwd[4]+pwd[6])*3 + pwd[1]+pwd[3]+pwd[5]+pwd[7]) % 10
+                if cs == 0:     # 정상일때만
+                    ans += sum(pwd)
+                erase(i, j, ratio, N)
+                k = 0
     print(f'#{tc} {ans}')
