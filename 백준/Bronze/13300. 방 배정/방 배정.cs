@@ -16,7 +16,7 @@ class Mainn {
     };
     while (n-->0) {
       int[] a = Array.ConvertAll(Console.ReadLine().Split(' '), x => int.Parse(x));
-      raw[a[1]][a[0]]++;
+      raw[a[1] - 1][a[0]]++;
     }
     List<int> temp = raw.ConvertAll(x => x.ConvertAll(y => (int)Math.Ceiling((double)y / max)).Aggregate((a, b) => a + b));
     Console.WriteLine(temp.Aggregate((a, b) => a + b).ToString());
