@@ -71,11 +71,10 @@ public class Main {
         }
 
         for (int i = 0; i < n; i++) {
-            String ans = "";
             for (int j = 0; j < n; j++) {
-                ans += result_map[i][j];
+                sb.append(result_map[i][j]);
             }
-            sb.append(ans).append('\n');
+            sb.append('\n');
         }
 
         System.out.println(sb);
